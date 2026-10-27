@@ -396,21 +396,6 @@ function propsTang(w, A, A2) {
       glow.material.opacity = 0.48 + Math.sin(t * 2.4 + i) * 0.16;
     });
   }
-  // 虎符（台前的金色符牌）
-  const tally = new THREE.Group();
-  const half = (s) => {
-    const m = new THREE.Mesh(
-      new THREE.BoxGeometry(0.20, 0.13, 0.035),
-      new THREE.MeshStandardMaterial({ color: 0xa8762a, roughness: 0.32, metalness: 0.92 })
-    );
-    m.position.x = s * 0.115;
-    return m;
-  };
-  tally.add(half(-1), half(1));
-  tally.position.set(0, 0.075, 1.42);
-  tally.rotation.x = -0.34;
-  worldGroup.add(tally);
-  animators.push((t) => { tally.position.y = 0.075 + Math.sin(t * 1.4) * 0.02; tally.rotation.y = Math.sin(t * 0.5) * 0.28; });
 }
 
 function propsOpera(w, A, A2) {
@@ -532,7 +517,6 @@ function propsNeon(w, A, A2) {
 
 /* —— 现实展厅的三件「入口展品」：触碰即被拉入对应平行世界 —— */
 const GATES = [
-  { world: 'tang',  name: '虎符',     sub: '盛唐长安', at: [-1.75, 0, -0.55] },
   { world: 'opera', name: '残缺乐谱', sub: '最终彩排', at: [0.35, 0, -1.5] },
   { world: 'neon',  name: '街机',     sub: '霓虹地下', at: [0.90, 0, -2.30] },
 ];
