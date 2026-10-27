@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>兽华物语 · 文物记忆穿梭 IP</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d1117'/%3E%3Cpath d='M7 13h18v11H7z' fill='none' stroke='%23e0a63c' stroke-width='2'/%3E%3Cpath d='M12 13v-3a4 4 0 0 1 8 0v3' fill='none' stroke='%23e0a63c' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="./assets/style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three.module.js",
+    "three/addons/": "./vendor/jsm/"
+  }
+}
+</script>
+</head>
+<body data-world="lobby">
+
+<canvas id="stage"></canvas>
+<div id="vignette"></div>
+<div id="scanlines"></div>
+<div id="flash"></div>
+
+<!-- ══════════ 开场载入层 ══════════ -->
+<div id="intro">
+  <div class="intro-bg"></div>
+  <div class="intro-inner">
+    <div class="suitcase">
+      <svg viewBox="0 0 120 90" aria-hidden="true">
+        <rect class="sc-body" x="14" y="26" width="92" height="56" rx="6"/>
+        <rect class="sc-lid"  x="14" y="26" width="92" height="18" rx="5"/>
+        <path class="sc-handle" d="M46 26 v-9 a14 14 0 0 1 28 0 v9"/>
+        <rect class="sc-band" x="30" y="26" width="9" height="56"/>
+        <rect class="sc-band" x="81" y="26" width="9" height="56"/>
+        <circle class="sc-lock" cx="60" cy="52" r="6"/>
+        <path class="sc-seam" d="M14 44 H106"/>
+      </svg>
+    </div>
+    <h1 class="logo-title" role="img" aria-label="兽华物语">
+      <img src="./assets/logo_title.png" alt="兽华物语" draggable="false">
+    </h1>
+    <p class="sub">BEASTS OF CHINA</p>
+    <p class="tag">文物记忆穿梭 IP · 三条平行世界线 · 沉浸式叙事</p>
+    <div class="bar"><i id="introBar"></i></div>
+    <div class="intro-foot">
+      <span id="introPct">正在连接时空锁…</span>
+    </div>
+    <button id="enterBtn" disabled>推 开 展 厅 的 门</button>
+  </div>
+</div>
+
+<!-- ══════════ 顶栏 ══════════ -->
+<header id="top">
+  <div class="brand">
+    <span class="mark">◈</span>
+    <div class="brand-t">
+      <b>兽华物语</b>
+      <em>BEASTS OF CHINA</em>
+    </div>
+  </div>
+
+  <nav id="worldTabs"></nav>
+
+  <div class="tools">
+    <div class="frag" id="fragBox" title="记忆碎片收集进度">
+      <span class="frag-ico">◈</span>
+      <span id="fragCount">0 / 9</span>
+      <div class="frag-bar"><i id="fragBar"></i></div>
+    </div>
+    <button id="travelBtn" class="tbtn" title="触碰展品 / 开启手提箱，穿越到另一条世界线">穿梭</button>
+    <button id="blindBtn" class="tbtn">盲盒</button>
+    <button id="archiveBtn" class="tbtn primary">档案</button>
+  </div>
+</header>
+
+<!-- ══════════ 左侧角色坞 ══════════ -->
+<aside id="charDock">
+  <div class="dock-title">主角团 · CAST</div>
+  <div id="charList"></div>
+  <div class="caster" id="caster">
+    <div class="caster-name" id="casterName">—</div>
+    <div class="caster-trait" id="casterTrait">—</div>
+  </div>
+</aside>
+
+<!-- ══════════ 右侧剧情卡 ══════════ -->
+<section id="loreCard">
+  <div class="lore-tag"><span id="loreIndex">世界线 00</span><i id="loreEn"></i></div>
+  <h2 id="loreTitle">—</h2>
+  <p id="loreDesc">—</p>
+  <div class="lore-meta">
+    <div><span>入口文物</span><b id="loreRelic">—</b></div>
+    <div><span>当前皮肤</span><b id="loreSkin">—</b></div>
+  </div>
+  <div class="lore-mission">
+    <span>本线任务</span>
+    <b id="loreMission">—</b>
+  </div>
+  <div class="lore-symbols" id="loreSymbols"></div>
+</section>
+
+<!-- ══════════ 底部工具条 ══════════ -->
+<div id="gateStrip"></div>
+<div id="hint">拖拽旋转 · 滚轮缩放 · 点击<span>发光碎片</span>解锁记忆 · 或开启<span>记忆手提箱</span>穿梭时空</div>
+<div id="viewTools">
+  <button id="autoBtn" class="vbtn active">自动旋转</button>
+  <button id="resetBtn" class="vbtn">复位视角</button>
+</div>
+
+<div id="toast"></div>
+
+<!-- ══════════ 档案 overlay ══════════ -->
+<div id="archive" class="overlay">
+  <div class="ov-panel">
+    <div class="ov-head">
+      <div>
+        <h2>IP 商业逻辑档案</h2>
+        <p>世界观 · 线上矩阵 · 线下渠道 · 分镜故事 · 商品定价 · 用户调研</p>
+      </div>
+      <button class="close" data-close="archive">×</button>
+    </div>
+    <div class="ov-body">
+      <nav id="ovNav"></nav>
+      <div id="ovContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 盲盒 overlay ══════════ -->
+<div id="blindbox" class="overlay">
+  <div class="ov-panel narrow">
+    <div class="ov-head">
+      <div>
+        <h2>角色盲盒 · BLIND BOX</h2>
+        <p>4 位主角 × 3 套世界线皮肤</p>
+      </div>
+      <button class="close" data-close="blindbox">×</button>
+    </div>
+    <div class="ov-body">
+      <div class="bb-price">
+        <div><b>¥69–79</b><span>常规单盒</span></div>
+        <div><b>¥299</b><span>整套端盒</span></div>
+        <div><b>¥29–39</b><span>徽章 / 钥匙扣</span></div>
+      </div>
+      <div class="bb-stage" id="bbStage">
+        <div class="bb-idle">点击抽取，看看你会开出哪一条世界线</div>
+      </div>
+      <button id="drawBtn" class="draw">抽 取 盲 盒</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 记忆完整 · 结局 overlay ══════════ -->
+<div id="ending" class="overlay">
+  <div class="ov-panel narrow">
+    <div class="ov-head">
+      <div>
+        <h2 id="endTitle">—</h2>
+        <p id="endSub">—</p>
+      </div>
+      <button class="close" data-close="ending">×</button>
+    </div>
+    <div class="ov-body" style="display:block">
+      <div class="end-inner">
+        <div class="end-mark">◈</div>
+        <p id="endText">—</p>
+        <p class="end-quote">时空不会被改写，但遗憾会被看见。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* 启动兜底：file:// 打开 或 模块加载失败时给出明确提示，而不是白屏无反应 */
+(function () {
+  function fail(html) {
+    var d = document.getElementById('bootErr');
+    if (!d) {
+      d = document.createElement('div');
+      d.id = 'bootErr';
+      document.body.appendChild(d);
+    }
+    d.innerHTML = html;
+    d.setAttribute('style', [
+      'position:fixed', 'inset:0', 'z-index:9999',
+      'display:flex', 'flex-direction:column', 'align-items:center', 'justify-content:center',
+      'gap:16px', 'padding:44px', 'background:#0b0e13', 'color:#e8e2d6',
+      'font:14px/1.95 system-ui,"Microsoft YaHei",sans-serif', 'text-align:center'
+    ].join(';'));
+  }
+
+  window.__bootFail = fail;
+
+  if (location.protocol === 'file:' && !window.__MS_STANDALONE__) {
+    fail('<div style="font-size:19px;letter-spacing:.08em;color:#e0a63c">需要通过本地服务器打开</div>' +
+      '<div style="max-width:520px">浏览器禁止 <code>file://</code> 协议加载 ES 模块与 3D 模型，' +
+      '所以直接双击 HTML 文件是打不开的。<br><br>' +
+      '请双击项目目录里的 <b style="color:#e0a63c">start.bat</b>（会自动打开浏览器），<br>' +
+      '或在项目目录执行 <code>node server.js</code>，再访问 <code>http://127.0.0.1:8123</code>。</div>');
+    return;
+  }
+
+  // 模块若因依赖缺失而中断，app.js 永远不会执行，__MS__ 也就不会出现
+  setTimeout(function () {
+    if (!window.__MS__) {
+      fail('<div style="font-size:19px;letter-spacing:.08em;color:#e0a63c">载入失败</div>' +
+        '<div style="max-width:520px">页面脚本没有正常启动，通常是 <code>vendor/</code> 依赖不完整。<br>' +
+        '请在项目目录执行 <code>python sync_vendor.py</code> 补齐依赖后刷新。<br><br>' +
+        '<span style="opacity:.7">按 F12 打开控制台可看到具体报错。</span></div>');
+    }
+  }, 12000);
+})();
+</script>
+
+<script type="module" src="./assets/app.js"></script>
+<div class="loading-mask" id="loadingMask">正在载入角色…</div>
+</body>
+</html>
