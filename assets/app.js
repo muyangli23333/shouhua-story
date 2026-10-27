@@ -533,33 +533,33 @@ function gateRelic(kind, tw) {
     base.position.y = -0.125;
     g.add(base);
 
-    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.072, 0.13, 6, 16), clay);
+    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.17, 6, 16), clay);
     body.rotation.z = Math.PI / 2;
     body.position.y = 0.005;
     g.add(body);
 
-    for (const s of [-0.052, 0.052]) {
+    for (const s of [-0.062, 0.062]) {
       const hump = new THREE.Mesh(
-        new THREE.SphereGeometry(0.05, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2),
+        new THREE.SphereGeometry(0.042, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2),
         glaze
       );
-      hump.position.set(s, 0.07, 0);
+      hump.position.set(s, 0.058, 0);
       g.add(hump);
     }
 
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.038, 0.14, 14), clay);
-    neck.position.set(0.1, 0.08, 0);
-    neck.rotation.z = -0.36;
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.023, 0.036, 0.145, 14), clay);
+    neck.position.set(0.115, 0.072, 0);
+    neck.rotation.z = -0.3;
     g.add(neck);
 
-    const head = new THREE.Mesh(new THREE.CapsuleGeometry(0.023, 0.048, 5, 12), clay);
-    head.position.set(0.15, 0.142, 0);
-    head.rotation.z = Math.PI / 2 - 0.36;
+    const head = new THREE.Mesh(new THREE.CapsuleGeometry(0.021, 0.044, 5, 12), clay);
+    head.position.set(0.163, 0.136, 0);
+    head.rotation.z = Math.PI / 2 - 0.3;
     g.add(head);
 
-    for (const [lx, lz] of [[0.058, 0.046], [0.058, -0.046], [-0.058, 0.046], [-0.058, -0.046]]) {
-      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.013, 0.125, 12), clay);
-      leg.position.set(lx, -0.062, lz);
+    for (const [lx, lz] of [[0.072, 0.042], [0.072, -0.042], [-0.072, 0.042], [-0.072, -0.042]]) {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.012, 0.12, 12), clay);
+      leg.position.set(lx, -0.064, lz);
       g.add(leg);
     }
   } else if (kind === 'opera') {
