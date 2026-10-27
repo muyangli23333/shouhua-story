@@ -517,6 +517,7 @@ function propsNeon(w, A, A2) {
 
 /* —— 现实展厅的三件「入口展品」：触碰即被拉入对应平行世界 —— */
 const GATES = [
+  { world: 'tang',  name: '骆驼俑',   sub: '盛唐长安', at: [-1.75, 0, -0.55] },
   { world: 'opera', name: '残缺乐谱', sub: '最终彩排', at: [0.35, 0, -1.5] },
   { world: 'neon',  name: '街机',     sub: '霓虹地下', at: [0.90, 0, -2.30] },
 ];
@@ -524,12 +525,42 @@ const GATES = [
 function gateRelic(kind, tw) {
   const g = new THREE.Group();
   if (kind === 'tang') {
-    const m = new THREE.MeshStandardMaterial({ color: 0xa8762a, roughness: 0.3, metalness: 0.95 });
-    for (const s of [-1, 1]) {
-      const half = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.1, 0.03), m);
-      half.position.x = s * 0.09;
-      half.rotation.z = s * 0.05;
-      g.add(half);
+    /* 唐三彩骆驼俑：褐黄胎体 + 绿釉双峰 */
+    const clay = new THREE.MeshStandardMaterial({ color: 0xb98a4e, roughness: 0.62, metalness: 0.06 });
+    const glaze = new THREE.MeshStandardMaterial({ color: 0x6f8f6a, roughness: 0.34, metalness: 0.16 });
+
+    const base = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.028, 0.13), clay);
+    base.position.y = -0.125;
+    g.add(base);
+
+    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.072, 0.13, 6, 16), clay);
+    body.rotation.z = Math.PI / 2;
+    body.position.y = 0.005;
+    g.add(body);
+
+    for (const s of [-0.052, 0.052]) {
+      const hump = new THREE.Mesh(
+        new THREE.SphereGeometry(0.05, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2),
+        glaze
+      );
+      hump.position.set(s, 0.07, 0);
+      g.add(hump);
+    }
+
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.038, 0.14, 14), clay);
+    neck.position.set(0.1, 0.08, 0);
+    neck.rotation.z = -0.36;
+    g.add(neck);
+
+    const head = new THREE.Mesh(new THREE.CapsuleGeometry(0.023, 0.048, 5, 12), clay);
+    head.position.set(0.15, 0.142, 0);
+    head.rotation.z = Math.PI / 2 - 0.36;
+    g.add(head);
+
+    for (const [lx, lz] of [[0.058, 0.046], [0.058, -0.046], [-0.058, 0.046], [-0.058, -0.046]]) {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.013, 0.125, 12), clay);
+      leg.position.set(lx, -0.062, lz);
+      g.add(leg);
     }
   } else if (kind === 'opera') {
     const sheet = new THREE.Mesh(
